@@ -6,16 +6,28 @@ from places_utils import preprocess_input
 import numpy as np
 import os
 
-model = VGG16_Places365(weights='places')
 
-img_path = 'restaurant.jpg'
+
+
+model = VGG16_Places365(weights='places')
+# kernel = model.get_layer('predictions').get_weights()[0]
+# bias = np.zeros(365)
+# model.get_layer('predictions').set_weights([kernel, bias])
+
+
+img_path = '197.jpg'
 img = image.load_img(img_path, target_size=(224, 224))
 x = image.img_to_array(img)
 x = np.expand_dims(x, axis=0)
 x = preprocess_input(x)
 
-predictions_to_return = 5
+predictions_to_return = 10
 preds = model.predict(x)[0]
+
+print preds.sum()
+print preds
+
+
 top_preds = np.argsort(preds)[::-1][0:predictions_to_return]
 
 # load the class label
@@ -31,5 +43,5 @@ classes = tuple(classes)
 
 print('--SCENE CATEGORIES:')
 # output the prediction
-for i in range(0, 5):
-    print(classes[top_preds[i]])
+for i in range(0, predictions_to_return):
+    print(top_preds[i], classes[top_preds[i]])
